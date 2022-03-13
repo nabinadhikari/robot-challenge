@@ -1,16 +1,5 @@
-export enum Face {
-  NORTH,
-  EAST,
-  SOUTH,
-  WEST,
-}
-export enum Rotation {
-  LEFT,
-  RIGHT,
-}
-function getKeyName(face: Face) {
-  return Object.entries(Face).find(([key, val]) => val === face)?.[0];
-}
+import { Face, Rotation } from "./types";
+import { getKeyName } from "./common-methods";
 
 export default class Robot {
   private _maxX: number;

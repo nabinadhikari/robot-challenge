@@ -1,4 +1,5 @@
-import Robot, { Face, Rotation } from "./Robot";
+import Robot from "./Robot";
+import { Face, Rotation } from "./types";
 
 let robot: Robot;
 beforeEach(() => {

@@ -1,5 +1,6 @@
 import inquirer from "inquirer";
-import Robot, { Face, Rotation } from "./src/Robot";
+import Robot from "./src/Robot";
+import { Face, Rotation } from "./src/types";
 
 console.log(`
 === Robot Challenge ===
