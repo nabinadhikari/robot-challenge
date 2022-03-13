@@ -1,3 +1,6 @@
+import MoveCommand from "./commands/MoveCommand";
+import PlaceCommand from "./commands/PlaceCommand";
+import TurnCommand from "./commands/TurnCommand";
 import Robot from "./Robot";
 import { Face, Rotation } from "./types";
 
@@ -14,7 +17,12 @@ describe("Robot Placement", () => {
       { x: 4, y: 4, expected: true },
     ];
     testData.forEach((td) => {
-      const placed = robot.place(td.x, td.y, Face.NORTH);
+      const placeCommand = new PlaceCommand();
+      const placed = placeCommand.executeCommand(robot, {
+        x: td.x,
+        y: td.y,
+        face: Face.NORTH,
+      });
       expect(placed).toBe(td.expected);
     });
   });
@@ -26,7 +34,12 @@ describe("Robot Placement", () => {
       { x: Number.MAX_VALUE, y: Number.MAX_VALUE, expected: false },
     ];
     testData.forEach((td) => {
-      const placed = robot.place(td.x, td.y, Face.NORTH);
+      const placeCommand = new PlaceCommand();
+      const placed = placeCommand.executeCommand(robot, {
+        x: td.x,
+        y: td.y,
+        face: Face.NORTH,
+      });
       expect(placed).toBe(td.expected);
     });
   });
@@ -34,58 +47,72 @@ describe("Robot Placement", () => {
 
 describe("Robot Turn", () => {
   it("should turn appropriately", () => {
-    const placed = robot.place(0, 0, Face.NORTH);
-    robot.turn(Rotation.LEFT);
+    const placeCommand = new PlaceCommand();
+    const placed = placeCommand.executeCommand(robot, {
+      x: 0,
+      y: 0,
+      face: Face.NORTH,
+    });
+    const turnCommand = new TurnCommand();
+
+    turnCommand.executeCommand(robot, Rotation.LEFT);
     expect(robot.currentFace()).toBe(Face.WEST);
-    robot.turn(Rotation.LEFT);
+    turnCommand.executeCommand(robot, Rotation.LEFT);
     expect(robot.currentFace()).toBe(Face.SOUTH);
-    robot.turn(Rotation.LEFT);
+    turnCommand.executeCommand(robot, Rotation.LEFT);
     expect(robot.currentFace()).toBe(Face.EAST);
-    robot.turn(Rotation.LEFT);
+    turnCommand.executeCommand(robot, Rotation.LEFT);
     expect(robot.currentFace()).toBe(Face.NORTH);
-    robot.turn(Rotation.LEFT);
+    turnCommand.executeCommand(robot, Rotation.LEFT);
     expect(robot.currentFace()).toBe(Face.WEST);
-    robot.turn(Rotation.RIGHT);
+    turnCommand.executeCommand(robot, Rotation.RIGHT);
     expect(robot.currentFace()).toBe(Face.NORTH);
-    robot.turn(Rotation.RIGHT);
+    turnCommand.executeCommand(robot, Rotation.RIGHT);
     expect(robot.currentFace()).toBe(Face.EAST);
-    robot.turn(Rotation.RIGHT);
+    turnCommand.executeCommand(robot, Rotation.RIGHT);
     expect(robot.currentFace()).toBe(Face.SOUTH);
-    robot.turn(Rotation.RIGHT);
+    turnCommand.executeCommand(robot, Rotation.RIGHT);
     expect(robot.currentFace()).toBe(Face.WEST);
-    robot.turn(Rotation.RIGHT);
+    turnCommand.executeCommand(robot, Rotation.RIGHT);
     expect(robot.currentFace()).toBe(Face.NORTH);
-    robot.turn(Rotation.RIGHT);
+    turnCommand.executeCommand(robot, Rotation.RIGHT);
     expect(robot.currentFace()).toBe(Face.EAST);
-    robot.turn(Rotation.LEFT);
+    turnCommand.executeCommand(robot, Rotation.LEFT);
     expect(robot.currentFace()).toBe(Face.NORTH);
-    robot.turn(Rotation.RIGHT);
+    turnCommand.executeCommand(robot, Rotation.RIGHT);
     expect(robot.currentFace()).toBe(Face.EAST);
-    robot.turn(Rotation.RIGHT);
+    turnCommand.executeCommand(robot, Rotation.RIGHT);
     expect(robot.currentFace()).toBe(Face.SOUTH);
   });
 });
 describe("Robot Move", () => {
   it("should move appropriately", () => {
-    const placed = robot.place(0, 0, Face.NORTH);
-    robot.move();
+    const placeCommand = new PlaceCommand();
+    const placed = placeCommand.executeCommand(robot, {
+      x: 0,
+      y: 0,
+      face: Face.NORTH,
+    });
+    const moveCommand = new MoveCommand();
+    const turnCommand = new TurnCommand();
+    moveCommand.executeCommand(robot);
     expect(robot.currentPosition()).toEqual([0, 1]);
-    robot.move();
+    moveCommand.executeCommand(robot);
     expect(robot.currentPosition()).toEqual([0, 2]);
-    robot.move();
+    moveCommand.executeCommand(robot);
     expect(robot.currentPosition()).toEqual([0, 3]);
-    robot.move();
+    moveCommand.executeCommand(robot);
     expect(robot.currentPosition()).toEqual([0, 4]);
-    robot.move();
+    moveCommand.executeCommand(robot);
     expect(robot.currentPosition()).toEqual([0, 4]);
-    robot.turn(Rotation.LEFT);
-    robot.move();
+    turnCommand.executeCommand(robot, Rotation.LEFT);
+    moveCommand.executeCommand(robot);
     expect(robot.currentPosition()).toEqual([0, 4]);
-    robot.turn(Rotation.LEFT);
-    robot.move();
+    turnCommand.executeCommand(robot, Rotation.LEFT);
+    moveCommand.executeCommand(robot);
     expect(robot.currentPosition()).toEqual([0, 3]);
-    robot.turn(Rotation.LEFT);
-    robot.move();
+    turnCommand.executeCommand(robot, Rotation.LEFT);
+    moveCommand.executeCommand(robot);
     expect(robot.currentPosition()).toEqual([1, 3]);
   });
 });

@@ -2,8 +2,12 @@ import inquirer from "inquirer";
 import Robot from "./src/Robot";
 import { Face } from "./src/types";
 import { getFaceFromString, getRotationFromString } from "./src/common-methods";
+import PlaceCommand from "./src/commands/PlaceCommand";
+import MoveCommand from "./src/commands/MoveCommand";
+import TurnCommand from "./src/commands/TurnCommand";
+import ReportCommand from "./src/commands/ReportCommand";
 
-console.log(`
+process.stdout.write(`
 === Robot Challenge ===
 Available commands are
     1. PLACE X,Y,<FACE> (FACE = NORTH,EAST,SOUTH,WEST)
@@ -14,7 +18,11 @@ Available commands are
 
 async function startProgram() {
   let inPlay = true;
-  const robot = new Robot();
+  const robot = new Robot([6, 6]);
+  const placeCommand = new PlaceCommand();
+  const moveCommand = new MoveCommand();
+  const turnCommand = new TurnCommand();
+  const reportCommand = new ReportCommand();
   do {
     const answer = await inquirer.prompt<{ command: string }>({
       type: "input",
@@ -40,7 +48,7 @@ async function startProgram() {
         console.log("=> Error getting x,y,face");
         continue;
       }
-      const placed = robot.place(x, y, face);
+      const placed = placeCommand.executeCommand(robot, { x, y, face });
       if (!placed) {
         console.log("=> Ignore placing");
       } else {
@@ -50,7 +58,7 @@ async function startProgram() {
     }
     switch (answer.command) {
       case "MOVE":
-        if (!robot.move()) {
+        if (!moveCommand.executeCommand(robot)) {
           console.log("=> Ignoring MOVE");
         } else {
           console.log("=> Moved");
@@ -59,7 +67,8 @@ async function startProgram() {
       case "LEFT":
         const leftRotation = getRotationFromString(answer.command);
         if (leftRotation !== null) {
-          if (robot.turn(leftRotation)) console.log("=> Turned left");
+          if (turnCommand.executeCommand(robot, leftRotation))
+            console.log("=> Turned left");
           else console.log("=> Ignoring");
         } else {
           console.log(`=> Ignoring ${answer.command}`);
@@ -68,7 +77,8 @@ async function startProgram() {
       case "RIGHT":
         const rightRotation = getRotationFromString(answer.command);
         if (rightRotation !== null) {
-          if (robot.turn(rightRotation)) console.log("=> Turned right");
+          if (turnCommand.executeCommand(robot, rightRotation))
+            console.log("=> Turned right");
           else console.log("=> Ignoring");
         } else {
           console.log(`=> Ignoring ${answer.command}`);
@@ -76,7 +86,7 @@ async function startProgram() {
         break;
       case "REPORT":
         if (robot.isRobotPlaced()) {
-          console.log(`=> ${robot.report()}`);
+          console.log(`=> ${reportCommand.executeCommand(robot)}`);
         } else {
           console.log(`=> Robot not placed`);
         }
