@@ -69,7 +69,6 @@ export default class Robot {
     return false;
   }
   turn(rotation: Rotation): boolean {
-    console.log("turn rotation");
     if (!this._isRobotPlaced) return false;
     const currentFaceNum: number = this._currentFace;
     let nextFaceNum: number =
