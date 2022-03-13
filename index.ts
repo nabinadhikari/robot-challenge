@@ -1,6 +1,7 @@
 import inquirer from "inquirer";
 import Robot from "./src/Robot";
-import { Face, Rotation } from "./src/types";
+import { Face } from "./src/types";
+import { getFaceFromString, getRotationFromString } from "./src/common-methods";
 
 console.log(`
 === Robot Challenge ===
@@ -10,31 +11,6 @@ Available commands are
     3. LEFT/RIGHT
     4. REPORT
     `);
-
-function getFace(face: string): Face | null {
-  switch (face) {
-    case "NORTH":
-      return Face.NORTH;
-    case "SOUTH":
-      return Face.SOUTH;
-    case "EAST":
-      return Face.EAST;
-    case "WEST":
-      return Face.WEST;
-  }
-  return null;
-}
-
-function getRotation(rotation: string): Rotation | null {
-  switch (rotation) {
-    case "LEFT":
-      return Rotation.LEFT;
-    case "RIGHT":
-      return Rotation.RIGHT;
-    default:
-      return null;
-  }
-}
 
 async function startProgram() {
   let inPlay = true;
@@ -55,7 +31,7 @@ async function startProgram() {
       try {
         x = Number.parseInt(xyf[0]);
         y = Number.parseInt(xyf[1]);
-        face = getFace(xyf[2]);
+        face = getFaceFromString(xyf[2]);
         if (face === null) {
           console.log("=> Invalid Face");
           continue;
@@ -81,7 +57,7 @@ async function startProgram() {
         }
         break;
       case "LEFT":
-        const leftRotation = getRotation(answer.command);
+        const leftRotation = getRotationFromString(answer.command);
         if (leftRotation !== null) {
           if (robot.turn(leftRotation)) console.log("=> Turned left");
           else console.log("=> Ignoring");
@@ -90,7 +66,7 @@ async function startProgram() {
         }
         break;
       case "RIGHT":
-        const rightRotation = getRotation(answer.command);
+        const rightRotation = getRotationFromString(answer.command);
         if (rightRotation !== null) {
           if (robot.turn(rightRotation)) console.log("=> Turned right");
           else console.log("=> Ignoring");
