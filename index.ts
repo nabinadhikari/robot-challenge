@@ -32,7 +32,7 @@ async function startProgram() {
     if (placeCommand.isValidCommand(answer.command)) {
       placeCommand.executeCommand(robot, answer.command);
     } else if (moveCommand.isValidCommand(answer.command)) {
-      moveCommand.executeCommand(robot);
+      moveCommand.executeCommand(robot, answer.command);
     } else if (turnCommand.isValidCommand(answer.command)) {
       turnCommand.executeCommand(robot, answer.command);
     } else if (reportCommand.isValidCommand(answer.command)) {

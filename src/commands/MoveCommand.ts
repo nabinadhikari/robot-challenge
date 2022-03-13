@@ -6,7 +6,7 @@ export default class MoveCommand extends BaseCommand<boolean> {
   isValidCommand(command: string): boolean {
     return command === "MOVE";
   }
-  executeCommand(robot: Robot): boolean {
+  executeCommand(robot: Robot, command: string): boolean {
     if (!robot.isRobotPlaced()) return false;
     let [x, y] = robot.currentPosition();
     switch (robot.currentFace()) {
