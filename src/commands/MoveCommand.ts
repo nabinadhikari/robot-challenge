@@ -2,7 +2,10 @@ import Robot from "../Robot";
 import { Face } from "../types";
 import BaseCommand from "./BaseCommand";
 
-export default class MoveCommand extends BaseCommand<boolean, null> {
+export default class MoveCommand extends BaseCommand<boolean> {
+  isValidCommand(command: string): boolean {
+    return command === "MOVE";
+  }
   executeCommand(robot: Robot): boolean {
     if (!robot.isRobotPlaced()) return false;
     let [x, y] = robot.currentPosition();

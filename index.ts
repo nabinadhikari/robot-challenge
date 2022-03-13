@@ -17,8 +17,8 @@ Available commands are
     `);
 
 async function startProgram() {
-  let inPlay = true;
-  const robot = new Robot([6, 6]);
+  const robot = new Robot();
+  robot.setInPlay(true);
   const placeCommand = new PlaceCommand();
   const moveCommand = new MoveCommand();
   const turnCommand = new TurnCommand();
@@ -29,72 +29,17 @@ async function startProgram() {
       name: "command",
       message: "Your command: ",
     });
-    if (answer.command.startsWith("PLACE")) {
-      const xyf = answer.command.replace("PLACE", "").trim().split(",");
-      if (xyf.length !== 3) {
-        console.log("=> Please enter valid PLACE command (PLACE X,Y,FACE)");
-        continue;
-      }
-      let x: number, y: number, face: Face | null;
-      try {
-        x = Number.parseInt(xyf[0]);
-        y = Number.parseInt(xyf[1]);
-        face = getFaceFromString(xyf[2]);
-        if (face === null) {
-          console.log("=> Invalid Face");
-          continue;
-        }
-      } catch (e) {
-        console.log("=> Error getting x,y,face");
-        continue;
-      }
-      const placed = placeCommand.executeCommand(robot, { x, y, face });
-      if (!placed) {
-        console.log("=> Ignore placing");
-      } else {
-        console.log("=> Placed");
-      }
-      continue;
+    if (placeCommand.isValidCommand(answer.command)) {
+      placeCommand.executeCommand(robot, answer.command);
+    } else if (moveCommand.isValidCommand(answer.command)) {
+      moveCommand.executeCommand(robot);
+    } else if (turnCommand.isValidCommand(answer.command)) {
+      turnCommand.executeCommand(robot, answer.command);
+    } else if (reportCommand.isValidCommand(answer.command)) {
+      console.log(reportCommand.executeCommand(robot));
+    } else {
+      console.log("=> Invalid command");
     }
-    switch (answer.command) {
-      case "MOVE":
-        if (!moveCommand.executeCommand(robot)) {
-          console.log("=> Ignoring MOVE");
-        } else {
-          console.log("=> Moved");
-        }
-        break;
-      case "LEFT":
-        const leftRotation = getRotationFromString(answer.command);
-        if (leftRotation !== null) {
-          if (turnCommand.executeCommand(robot, leftRotation))
-            console.log("=> Turned left");
-          else console.log("=> Ignoring");
-        } else {
-          console.log(`=> Ignoring ${answer.command}`);
-        }
-        break;
-      case "RIGHT":
-        const rightRotation = getRotationFromString(answer.command);
-        if (rightRotation !== null) {
-          if (turnCommand.executeCommand(robot, rightRotation))
-            console.log("=> Turned right");
-          else console.log("=> Ignoring");
-        } else {
-          console.log(`=> Ignoring ${answer.command}`);
-        }
-        break;
-      case "REPORT":
-        if (robot.isRobotPlaced()) {
-          console.log(`=> ${reportCommand.executeCommand(robot)}`);
-        } else {
-          console.log(`=> Robot not placed`);
-        }
-        inPlay = false;
-        break;
-      default:
-        console.log("=> Unknown command");
-    }
-  } while (inPlay);
+  } while (robot.inPlay());
 }
 startProgram();
