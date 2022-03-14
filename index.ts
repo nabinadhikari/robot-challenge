@@ -3,6 +3,9 @@ import PlaceCommand from "./src/commands/PlaceCommand";
 import MoveCommand from "./src/commands/MoveCommand";
 import TurnCommand from "./src/commands/TurnCommand";
 import ReportCommand from "./src/commands/ReportCommand";
+// import fs from "fs";
+
+import readline from "readline";
 
 const robot = new Robot();
 const placeCommand = new PlaceCommand();
@@ -10,9 +13,17 @@ const moveCommand = new MoveCommand();
 const turnCommand = new TurnCommand();
 const reportCommand = new ReportCommand();
 
-process.stdin.on("data", (data) => {
-  handleCommand(data.toString().trim());
-  if (!robot.inPlay()) process.exit();
+const rl = readline.createInterface({
+  // To change to the source of commands to file, uncomment below
+  // input: fs.createReadStream("./testdata/commands.txt"),
+  input: process.stdin,
+  crlfDelay: Infinity,
+});
+
+rl.on("line", (line) => {
+  const command = line ? line.toString().trim() : "";
+  if (command) handleCommand(command);
+  if (!robot.inPlay()) rl.close();
 });
 
 function handleCommand(command: string) {
@@ -31,8 +42,9 @@ function handleCommand(command: string) {
 process.stdout.write(`
 === Robot Challenge ===
 Available commands are
-    1. PLACE X,Y,<FACE> (FACE = NORTH,EAST,SOUTH,WEST)
-    2. MOVE
-    3. LEFT/RIGHT
-    4. REPORT
+  1. PLACE X,Y,<FACE> (FACE = NORTH,EAST,SOUTH,WEST)
+  2. MOVE
+  3. LEFT/RIGHT
+  4. REPORT
+
 `);
