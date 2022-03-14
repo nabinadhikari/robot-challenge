@@ -12,6 +12,10 @@ The application is written in NodeJs using Typescript. To build and run this pro
 - Test project in watch mode `npm run test`
 - Start the application `npm start`
 
+## Changes
+
+The application is currently expecting commands from console input (stdin). This can be changed easily by swapping `createInterface.inpu` to `fs.createReadStream("./testdata/commands.txt")`.
+
 ## Program Rules
 
 This application has rules to accept valid commands and ignore invalid commands. Commands are case sensitive and some require specific structure. Available commands are:
