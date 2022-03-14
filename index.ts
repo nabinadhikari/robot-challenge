@@ -1,12 +1,33 @@
-import inquirer from "inquirer";
 import Robot from "./src/Robot";
-import { Face } from "./src/types";
-import { getFaceFromString, getRotationFromString } from "./src/common-methods";
 import PlaceCommand from "./src/commands/PlaceCommand";
 import MoveCommand from "./src/commands/MoveCommand";
 import TurnCommand from "./src/commands/TurnCommand";
 import ReportCommand from "./src/commands/ReportCommand";
 
+const robot = new Robot();
+const placeCommand = new PlaceCommand();
+const moveCommand = new MoveCommand();
+const turnCommand = new TurnCommand();
+const reportCommand = new ReportCommand();
+
+process.stdin.on("data", (data) => {
+  handleCommand(data.toString().trim());
+  if (!robot.inPlay()) process.exit();
+});
+
+function handleCommand(command: string) {
+  if (placeCommand.isValidCommand(command)) {
+    placeCommand.executeCommand(robot, command);
+  } else if (moveCommand.isValidCommand(command)) {
+    moveCommand.executeCommand(robot, command);
+  } else if (turnCommand.isValidCommand(command)) {
+    turnCommand.executeCommand(robot, command);
+  } else if (reportCommand.isValidCommand(command)) {
+    console.log(reportCommand.executeCommand(robot));
+  } else {
+    console.log("=> Invalid command");
+  }
+}
 process.stdout.write(`
 === Robot Challenge ===
 Available commands are
@@ -14,32 +35,4 @@ Available commands are
     2. MOVE
     3. LEFT/RIGHT
     4. REPORT
-    `);
-
-async function startProgram() {
-  const robot = new Robot();
-  robot.setInPlay(true);
-  const placeCommand = new PlaceCommand();
-  const moveCommand = new MoveCommand();
-  const turnCommand = new TurnCommand();
-  const reportCommand = new ReportCommand();
-  do {
-    const answer = await inquirer.prompt<{ command: string }>({
-      type: "input",
-      name: "command",
-      message: "Your command: ",
-    });
-    if (placeCommand.isValidCommand(answer.command)) {
-      placeCommand.executeCommand(robot, answer.command);
-    } else if (moveCommand.isValidCommand(answer.command)) {
-      moveCommand.executeCommand(robot, answer.command);
-    } else if (turnCommand.isValidCommand(answer.command)) {
-      turnCommand.executeCommand(robot, answer.command);
-    } else if (reportCommand.isValidCommand(answer.command)) {
-      console.log(reportCommand.executeCommand(robot));
-    } else {
-      console.log("=> Invalid command");
-    }
-  } while (robot.inPlay());
-}
-startProgram();
+`);

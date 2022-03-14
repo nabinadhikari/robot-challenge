@@ -13,7 +13,7 @@ export default class Robot {
   private _currentY: number = -1;
   private _currentFace: Face = Face.NORTH;
   private _isRobotPlaced: boolean = false;
-  private _inPlay: boolean = false;
+  private _inPlay: boolean = true;
 
   inPlay() {
     return this._inPlay;
